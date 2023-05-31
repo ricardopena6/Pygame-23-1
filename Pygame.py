@@ -184,3 +184,87 @@ you_win = pg.transform.scale(pg.image.load('tela1.png'), (LARGURA, ALTURA))
 game_over = pg.transform.scale(pg.image.load('tela2.png'), (LARGURA, ALTURA))
 
 
+pg.init()
+pg.mixer.init()
+musica = pg.mixer.music.load('muisca_de_fundo_cr.mp3')
+pg.mixer.music.set_volume(0.5)
+
+janela = pg.display.set_mode((LARGURA, ALTURA))
+pg.display.set_caption("Jogo da Corrida")
+tempo = pg.time.Clock()
+
+personagem = Personagem()
+carros = pg.sprite.Group(Carro(1), Carro(2))
+bandeira = Bandeira()
+explosoes = pg.sprite.Group()
+scoreboard = Scoreboard()
+
+game_started = False
+instrucoes = pg.transform.scale(pg.image.load('tela_instrucoes.png'), (LARGURA, ALTURA))
+pg.mixer.music.play(-1)
+
+while True:
+
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+        # Verificar se o jogador pressionou Enter para iniciar o jogo
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                game_started = True
+
+    if not game_started:
+        # Exibir as instruções do jogo
+        janela.blit(instrucoes, (0,0))
+        pg.display.update()
+        continue
+    tempo.tick(60)
+    keys = pg.key.get_pressed()
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+
+    janela.fill((255, 255, 255))
+
+    personagem.movimento(keys)
+    if colisao(personagem, bandeira):
+        # Reposicionar a bandeira quando o personagem a toca
+        bandeira.y = -bandeira.altura / 2
+        bandeira.x = random.randint(100, LARGURA - 100)
+        scoreboard.ganha_ponto()
+
+    if scoreboard.pontos == 5:
+        # Verificar se o jogador alcançou a pontuação necessária para vencer o jogo
+        janela.blit(you_win, (0,0))
+        pg.display.update()
+        pg.time.wait(3000)  # Esperar 3 segundos
+        pg.quit()
+
+    if pg.sprite.spritecollide(personagem, carros, False, colisao):
+        personagem.reset_pos()
+        x, y = personagem.rect.center
+        explosoes.add(Explosao(x, y))
+        scoreboard.perde_vida()
+
+        if personagem.perde_vida() < 0:
+            # Verificar se o jogador perdeu todas as vidas
+            janela.blit(game_over, (0,0))
+            pg.display.update()
+            pg.time.wait(3000)  # Esperar 3 segundos
+            pg.quit()
+
+    janela.blit(personagem.image, personagem.rect)
+    carros.draw(janela)
+    janela.blit(bandeira.image, bandeira.rect)
+
+    personagem.update()
+    carros.update()
+    bandeira.update()
+    explosoes.update()
+    explosoes.draw(janela)
+
+    scoreboard.draw(janela)
+
+    pg.display.update()
+
+

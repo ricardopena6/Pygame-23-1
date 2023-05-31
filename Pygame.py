@@ -6,8 +6,8 @@ class Personagem(pg.sprite.Sprite):
     personagem1 = pg.image.load('personagem1.png')
     personagem2 = pg.image.load('personagem2.png')
 
-    def _init_(self):
-        super()._init_()
+    def __init__(self):
+        super().__init__()
         self.x = 50
         self.y = ALTURA/2
         self.vel = 4
@@ -62,8 +62,8 @@ class Carro(pg.sprite.Sprite):
     carro_vermelho = pg.image.load('carro_vermelho.png')
     carro_azul = pg.image.load('carro_azul.png')
 
-    def _init_(self, numero):
-        super()._init_()
+    def __init__(self, numero):
+        super().__init__()
         if numero == 1:
             self.x = 190
             self.image = self.carro_vermelho
@@ -101,8 +101,8 @@ class Carro(pg.sprite.Sprite):
 class Bandeira(pg.sprite.Sprite):
     imagem_bandeira = pg.image.load('bandeira.png')
 
-    def _init_(self):
-        super()._init_()
+    def __init__(self):
+        super().__init__()
         self.x = LARGURA / 2
         self.y = ALTURA / 2
         self.largura = 60
@@ -131,8 +131,8 @@ class Bandeira(pg.sprite.Sprite):
 explosao_imagens = [pg.image.load('explosao_{}.png'.format(i)) for i in range(1, 9)]
 
 class Explosao(pg.sprite.Sprite):
-    def _init_(self, x, y):
-        super()._init_()
+    def __init__(self, x, y):
+        super().__init__()
         self.frame = 0
         self.x = x
         self.y = y
@@ -150,7 +150,7 @@ class Explosao(pg.sprite.Sprite):
 
 
 class Scoreboard:
-    def _init_(self):
+    def __init__(self):
         self.font = pg.font.Font(None, 36)
         self.vidas = 3
         self.pontos = 0
@@ -266,5 +266,3 @@ while True:
     scoreboard.draw(janela)
 
     pg.display.update()
-
-
